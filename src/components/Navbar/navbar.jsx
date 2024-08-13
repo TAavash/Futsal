@@ -31,12 +31,15 @@ function Navbar() {
                 <>
                   <Link to="/shop" className={getLinkClass("/shop")}>Shop</Link>
                   <Link to="/product" className={getLinkClass("/product")}>Product</Link>
+                  <Link to="/booking" className={getLinkClass("/booking")}>Booking</Link>
+                  <Link to="/court" className={getLinkClass("/court")}>Court</Link>
                 </>
               )}
               {authState.userRole === 'admin' && (
                 <>
                   <Link to="/category" className={getLinkClass("/category")}>category</Link>
                   <Link to="/addproduct" className={getLinkClass("/addproduct")}>Add Product</Link>
+                  <Link to="/addcourt" className={getLinkClass("/addcourt")}>Add Court</Link>
                 </>
               )}
             </div>
@@ -68,12 +71,15 @@ function Navbar() {
               <>
                 <li><Link to="/shop" className={location.pathname === "/shop" ? "block text-sm px-2 py-4 text-white bg-green-500 font-semibold" : "block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"}>Shop</Link></li>
                 <li><Link to="/product" className={location.pathname === "/product" ? "block text-sm px-2 py-4 text-white bg-green-500 font-semibold" : "block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"}>Product</Link></li>
+                <li><Link to="/court" className={location.pathname === "/court" ? "block text-sm px-2 py-4 text-white bg-green-500 font-semibold" : "block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"}>Court</Link></li>
+                <li><Link to="/booking" className={location.pathname === "/booking" ? "block text-sm px-2 py-4 text-white bg-green-500 font-semibold" : "block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"}>Booking</Link></li>
               </>
             )}
             {authState.userRole === 'admin' && (
               <>
                 <li><Link to="/category" className={location.pathname === "/category" ? "block text-sm px-2 py-4 text-white bg-green-500 font-semibold" : "block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"}>category</Link></li>
                 <li><Link to="/addproduct" className={location.pathname === "/addproduct" ? "block text-sm px-2 py-4 text-white bg-green-500 font-semibold" : "block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"}>Add Product</Link></li>
+                <li><Link to="/addcourt" className={location.pathname === "/addcourt" ? "block text-sm px-2 py-4 text-white bg-green-500 font-semibold" : "block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"}>Add Court</Link></li>
               </>
             )}
             {authState.isAuthenticated ? (

@@ -1,60 +1,75 @@
-// src/components/Court/CourtComponent.jsx
-
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { fetchCourtById, createBooking } from '../../utils/Api';
-import { useAuthContext } from '../../features/auth/authContext'; // Correct the import path here
+import axios from 'axios';
 
 const CourtComponent = () => {
   const { id } = useParams();
   const [court, setCourt] = useState(null);
-  const [bookingTime, setBookingTime] = useState({ startTime: '', endTime: '' });
-  const { user } = useAuthContext();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchCourt = async () => {
-      const response = await fetchCourtById(id);
-      setCourt(response.data);
+    const fetchCourtDetails = async () => {
+      try {
+        const response = await axios.get(`/api/courts/${id}`);
+        setCourt(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching court details:', error);
+        setLoading(false);
+      }
     };
-    fetchCourt();
+
+    fetchCourtDetails();
   }, [id]);
 
-  const handleBooking = async () => {
-    const data = {
-      court: id,
-      date: new Date(), // you may want to handle date selection
-      startTime: bookingTime.startTime,
-      endTime: bookingTime.endTime,
-      user: user._id
-    };
-    await createBooking(data);
-    alert('Booking successful!');
-  };
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-  if (!court) return <div>Loading...</div>;
+  if (!court) {
+    return <div>Court not found</div>;
+  }
 
   return (
-    <div>
-      <h1>{court.name}</h1>
-      <p>{court.location}</p>
-      <p>{court.pricePerHour} per hour</p>
-      <img src={court.courtImage} alt={court.name} />
-      
-      {/* Booking Form */}
-      <h2>Book this Court</h2>
-      <input
-        type="text"
-        placeholder="Start Time"
-        value={bookingTime.startTime}
-        onChange={(e) => setBookingTime({ ...bookingTime, startTime: e.target.value })}
-      />
-      <input
-        type="text"
-        placeholder="End Time"
-        value={bookingTime.endTime}
-        onChange={(e) => setBookingTime({ ...bookingTime, endTime: e.target.value })}
-      />
-      <button onClick={handleBooking}>Book Now</button>
+    <div className="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
+      <h1 className="text-3xl font-bold mb-4">{court.name}</h1>
+      <p className="text-gray-700 text-lg mb-2">{court.location}</p>
+      <p className="text-gray-500 mb-4">{court.description}</p>
+
+      <img src={`/uploads/${court.courtImage}`} alt={court.name} className="w-full h-64 object-cover rounded-lg mb-4" />
+
+      <h2 className="text-2xl font-bold mb-2">Details</h2>
+      <p><span className="font-bold">Type:</span> {court.courtType}</p>
+      <p><span className="font-bold">Price per Hour:</span> {court.pricePerHour} {court.currency}</p>
+      <p><span className="font-bold">Contact:</span> {court.contactPerson} ({court.contactNumber}, {court.email})</p>
+      <p><span className="font-bold">Surface Type:</span> {court.surfaceType}</p>
+      <p><span className="font-bold">Capacity:</span> {court.capacity} people</p>
+      <p><span className="font-bold">Lighting Available:</span> {court.lighting ? 'Yes' : 'No'}</p>
+
+      <h2 className="text-2xl font-bold mt-6 mb-2">Amenities</h2>
+      <ul className="list-disc list-inside">
+        {court.amenities.map((amenity, index) => (
+          <li key={index}>{amenity}</li>
+        ))}
+      </ul>
+
+      <h2 className="text-2xl font-bold mt-6 mb-2">Availability</h2>
+      <ul className="list-disc list-inside">
+        {court.availability.map((slot, index) => (
+          <li key={index}>{slot.day}: {slot.startTime} - {slot.endTime}</li>
+        ))}
+      </ul>
+
+      {court.gallery && court.gallery.length > 0 && (
+        <>
+          <h2 className="text-2xl font-bold mt-6 mb-2">Gallery</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {/* {court.gallery.map((image, index) => (
+              <img key={index} src={`/uploads/${image}`} alt={`Gallery image ${index + 1}`} className="w-full h-40 object-cover rounded-lg" />
+            ))} */}
+          </div>
+        </>
+      )}
     </div>
   );
 };

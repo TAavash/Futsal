@@ -8,10 +8,10 @@ const HeroSection = () => {
       <div className="relative max-w-lg mx-auto mb-8">
         <input 
           type="text" 
-          placeholder="Masukkan Lokasi Anda" 
-          className="w-full p-3 rounded-full border-none focus:ring-2 focus:ring-green-300"
+          placeholder="Courts" 
+          className="w-full p-3 rounded-full text-black border-none focus:ring-2 focus:ring-green-300"
         />
-        <button className="absolute right-0 top-0 mt-2 mr-2 bg-white text-green-500 rounded-full p-2">Search</button>
+        <button className="absolute right-0 top-0 mt-2 mr-2 bg-white text-green-500 rounded-full p-1">Search</button>
       </div>
       <div className="flex justify-center space-x-4">
         <button className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-full">Courts</button>

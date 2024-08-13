@@ -21,7 +21,7 @@ const BookingList = () => {
   ];
 
   return (
-    <div className="p-10 bg-white rounded-t-3xl">
+    <div className="p-10 bg-white">
       <h2 className="text-2xl font-bold mb-6">My Bookings</h2>
       <div className="space-y-4">
         {bookings.map((booking) => (
