@@ -1,17 +1,28 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
-const CourtSchema = new Schema({
-  name: { type: String, required: true, unique: true },
+const courtSchema = new mongoose.Schema({
+  name: { type: String, required: true },
   location: { type: String, required: true },
-  availability: [
-    {
-      date: { type: Date, required: true },
-      timeSlots: [{ type: String, required: true }] // e.g., ["09:00-10:00", "10:00-11:00"]
-    }
-  ],
+  description: String,
+  courtType: String,
   pricePerHour: { type: Number, required: true },
-  createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true }, // Admin who created the court
+  currency: { type: String, default: 'NPR' },
+  courtImage: String,
+  gallery: String,
+  amenities: String,
+  contactPerson: String,
+  contactNumber: String,
+  email: String,
+  availability: [{
+    day: String,
+    startTime: String,
+    endTime: String,
+  }],
+  surfaceType: String,
+  capacity: Number,
+  lighting: { type: Boolean, default: false },
 });
 
-module.exports = mongoose.model('Court', CourtSchema);
+const Court = mongoose.model('Court', courtSchema);
+
+module.exports = Court;
