@@ -9,7 +9,8 @@ const BookingSchema = new Schema({
   startTime: { type: String, required: true },
   endTime: { type: String, required: true },
   totalPrice: { type: Number, required: true },
-  paymentStatus: { type: String, enum: ['pending', 'completed'], required: true }
+  paymentStatus: { type: String, enum: ['pending', 'completed'], required: true },
+  createdAt: { type: Date, default: Date.now },
 });
 
 module.exports = mongoose.model('Booking', BookingSchema);

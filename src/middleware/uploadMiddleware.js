@@ -50,6 +50,11 @@ const profileImageStorage = diskStorage({
   filename,
 });
 
+// Storage for court images
+const courtImageStorage = diskStorage({
+  destination: getDestination("courts"),
+  filename,
+});
 // product image storage
 
 const productImageStorage = diskStorage({
@@ -63,6 +68,12 @@ const profileImage = multer({
   fileFilter: filter,
 });
 
+// Multer instance for court images
+const courtImage = multer({
+  storage: courtImageStorage,
+  fileFilter: filter,
+});
+
 // product image 
 const productImage = multer({
   storage: productImageStorage,
@@ -72,4 +83,5 @@ const productImage = multer({
 module.exports = {
   profileImage,
   productImage,
+  courtImage,
 };
