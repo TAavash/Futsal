@@ -1,3 +1,5 @@
+// src/LoginComponent.js
+
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
@@ -5,13 +7,11 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch } from "react-redux";
 import { login } from "../../features/auth/authSlice";
-import Footsal from "../../assets/footsal.jpg";
 
-function LoginComponent() {
+const LoginComponent = () => {
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
-    rememberMe: false,
   });
 
   const [errors, setErrors] = useState({});
@@ -19,10 +19,10 @@ function LoginComponent() {
   const dispatch = useDispatch();
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setLoginData({
       ...loginData,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     });
   };
 
@@ -37,121 +37,100 @@ function LoginComponent() {
     e.preventDefault();
     const validationErrors = validate();
     setErrors(validationErrors);
-  
+
     if (Object.keys(validationErrors).length === 0) {
       try {
         const response = await axios.post(
           "http://localhost:5000/api/auth/login",
           loginData
         );
-        const { token, user } = response.data;
+        // console.log(response.data);
+        // set token in local storage
+        const { token,user} = response.data;
         localStorage.setItem("token", token);
-        localStorage.setItem("user_id", user.id);
-        dispatch(login({ token, user_id: user.id, role: user.role }));
+        // console.log(response.data.token);
+        // Dispatch the login action with the role
+        dispatch(login({ token, role: user.role }));
+
+        // show success message
         toast.success("Login successful");
       } catch (error) {
-        console.error(error.response?.data?.msg || error.message);
-        toast.error(error.response?.data?.msg || 'An error occurred');
+        console.error(error.response.data.msg);
+        toast.error(error.response.data.msg);
       }
     }
   };
-  
-  
-  
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
   return (
-    <div
-      className="flex items-center justify-center h-screen bg-cover bg-center"
-      style={{
-        backgroundImage: `url(${Footsal})`,
-      }}
-    >
-      <div className="bg-white p-10 rounded-lg shadow-lg w-full max-w-md">
-        <h1 className="text-4xl font-bold mb-6 text-center">WELCOME</h1>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-6 text-gray-800">Login</h2>
         <form onSubmit={handleSubmit}>
+          <ToastContainer />
           <div className="mb-4">
             <label
-              htmlFor="email"
               className="block text-gray-700 font-bold mb-2"
+              htmlFor="email"
             >
               Email
             </label>
             <input
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-indigo-100"
               type="email"
               id="email"
+              placeholder="Enter your email"
               name="email"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               value={loginData.email}
               onChange={handleChange}
-              placeholder="Enter your email"
             />
             {errors.email && (
               <div className="text-red-500 text-sm">{errors.email}</div>
             )}
           </div>
-          <div className="mb-4 relative">
+          <div className="mb-6 relative">
             <label
-              htmlFor="password"
               className="block text-gray-700 font-bold mb-2"
+              htmlFor="password"
             >
               Password
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-indigo-100"
               type={showPassword ? "text" : "password"}
               id="password"
-              name="password"
               placeholder="Enter your password"
+              name="password"
               value={loginData.password}
               onChange={handleChange}
             />
             <div
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 mt-8 cursor-pointer"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 mt-8"
               onClick={togglePasswordVisibility}
             >
               {showPassword ? (
-                <FaEyeSlash className="text-gray-500" />
+                <FaEyeSlash className="text-gray-500 cursor-pointer" />
               ) : (
-                <FaEye className="text-gray-500" />
+                <FaEye className="text-gray-500 cursor-pointer" />
               )}
             </div>
             {errors.password && (
               <div className="text-red-500 text-sm">{errors.password}</div>
             )}
           </div>
-          <div className="mb-4 flex items-center">
-            <input
-              type="checkbox"
-              id="rememberMe"
-              name="rememberMe"
-              className="mr-2 leading-tight"
-              checked={loginData.rememberMe}
-              onChange={handleChange}
-            />
-            <label
-              htmlFor="rememberMe"
-              className="text-gray-700 font-bold"
-            >
-              Remember Me
-            </label>
-          </div>
-          <div className="flex items-center justify-between">
-            <button
-              type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
-            >
-              Login
-            </button>
-          </div>
+          <button
+            className="w-full bg-indigo-500 text-white py-2 px-4 rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600"
+            type="submit"
+          >
+            Login
+          </button>
         </form>
       </div>
-      <ToastContainer />
     </div>
   );
-}
+};
 
 export default LoginComponent;

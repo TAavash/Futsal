@@ -1,6 +1,8 @@
 // src/context/AuthContext.js
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { login, logout } from './authSlice';
 
 // Create AuthContext
 export const AuthContext = createContext();
@@ -16,24 +18,23 @@ export const useAuthContext = () => {
 
 // AuthProvider component
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
 
-  const login = (userData) => {
-    setUser(userData);
+  const loginHandler = (userData) => {
+    dispatch(login(userData));
     localStorage.setItem('token', userData.token);
-    // localStorage.setItem("access_token", response.data.token);
-    // localStorage.setItem("user_id", response.data.user_id);
+    localStorage.setItem('user_id', userData.user_id); // Store user_id
   };
 
-  const logout = () => {
-    setUser(null);
+  const logoutHandler = () => {
+    dispatch(logout());
     localStorage.removeItem('token');
-    // localStorage.removeItem('user_id');
-    // localStorage.removeItem('access_token');  
+    localStorage.removeItem('user_id'); // Remove user_id
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login: loginHandler, logout: logoutHandler }}>
       {children}
     </AuthContext.Provider>
   );

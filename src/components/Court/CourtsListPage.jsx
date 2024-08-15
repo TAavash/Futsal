@@ -3,9 +3,14 @@ import axiosInstance from "../../Config/axiosConfig";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link } from "react-router-dom";
+import Modal from "react-modal";
+
+Modal.setAppElement("#root"); // Set the app root element for accessibility
 
 const CourtList = () => {
   const [courts, setCourts] = useState([]);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [courtToDelete, setCourtToDelete] = useState(null);
 
   useEffect(() => {
     fetchCourts();
@@ -21,16 +26,32 @@ const CourtList = () => {
     }
   };
 
-const deleteCourt = async (id) => {
-  try {
-    await axiosInstance.delete(`/api/courts/${id}`);
-    toast.success("Court successfully deleted.");
-    // Optionally, refresh or navigate to another page
-  } catch (error) {
-    console.error("Error deleting court:", error);
-    toast.error(error.response?.data?.msg || "An error occurred while deleting the court.");
-  }
-};
+  const openModal = (court) => {
+    setCourtToDelete(court);
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+    setCourtToDelete(null); // Clear the court to delete
+  };
+
+  const deleteCourt = async () => {
+    if (!courtToDelete) return; // Ensure there is a court to delete
+    try {
+      await axiosInstance.delete(`/api/courts/${courtToDelete._id}`);
+      setCourts(courts.filter((court) => court._id !== courtToDelete._id));
+      toast.success("Court successfully deleted.");
+      closeModal();
+    } catch (error) {
+      console.error("Error deleting court:", error);
+      toast.error(
+        error.response?.data?.msg ||
+        "An error occurred while deleting the court."
+      );
+      closeModal();
+    }
+  };
 
   return (
     <div className="max-w-7xl mx-auto p-8">
@@ -59,7 +80,7 @@ const deleteCourt = async (id) => {
                   Edit
                 </Link>
                 <button
-                  onClick={() => deleteCourt(court._id)}
+                  onClick={() => openModal(court)}
                   className="text-red-500 underline"
                 >
                   Delete
@@ -69,6 +90,31 @@ const deleteCourt = async (id) => {
           ))}
         </tbody>
       </table>
+
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        contentLabel="Confirm Delete Modal"
+        className="modal"
+        overlayClassName="overlay"
+      >
+        <h2 className="text-lg font-bold mb-4">Confirm Deletion</h2>
+        <p>Are you sure you want to delete this court?</p>
+        <div className="mt-4">
+          <button
+            onClick={deleteCourt}
+            className="bg-red-600 text-white py-2 px-4 rounded-full mr-4"
+          >
+            Confirm
+          </button>
+          <button
+            onClick={closeModal}
+            className="bg-gray-600 text-white py-2 px-4 rounded-full"
+          >
+            Cancel
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 };

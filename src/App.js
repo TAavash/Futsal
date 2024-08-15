@@ -15,6 +15,7 @@ import AddProductComponent from "./components/AddProduct/AddProductComponent";
 import ProtectedRoute from "./ProtectedRoutes/protectedRoute";
 import LoginComponent from "./components/Login/Login";
 import BookingComponent from "./components/Booking/BookingList";
+import AllBookingComponent from "./components/Booking/AllBooking";
 import BookingFormComponent from "./components/AddBooking/BookingForm";
 import CourtDetailComponents from "./components/Court/CourtDetailPage";
 import UserProfile from "./components/UserProfile/UserProfile";
@@ -34,6 +35,7 @@ class App extends Component {
             <Route path="/login" element={<LoginComponent />} />
             <Route path="/profile" element={<UserProfile />} />
             <Route path="/myBooking" element={<BookingComponent />} />
+            <Route path="/booking/list" element={<AllBookingComponent />} />
             <Route path="/bookings" element={<BookingFormComponent />} />
             <Route path="/bookings:id" element={<BookingFormComponent />} />
             <Route path="/court" element={<CourtComponent />} />
