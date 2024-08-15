@@ -5,6 +5,7 @@ const profileRoutes = require("./src/Routes/ProfileRoutes");
 const categoryRoutes = require("./src/Routes/categoryRoute");
 const productRoutes = require("./src/Routes/productRoutes");
 const courtRoutes = require("./src/Routes/courtRoute");
+const bookingRoutes = require("./src/Routes/bookingRoute");
 const app = express();
 const cors = require("cors");
 const port = 5000;
@@ -26,6 +27,7 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/category", categoryRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/courts", courtRoutes);
+app.use("/api/bookings", bookingRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

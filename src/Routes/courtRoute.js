@@ -13,7 +13,7 @@ const {
   //   deleteCourt,
 } = require("../controllers/courtController");
 
-// router.post("/create", authMiddleware, authorizeRole("admin"), createCourt);
+
 router.post('/', authMiddleware, authorizeRole('admin'), courtImage.single('courtImage'), createCourt);
 router.get("/", getAllCourts);
 router.get("/:id", getCourtById);
