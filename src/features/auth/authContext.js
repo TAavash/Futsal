@@ -21,11 +21,15 @@ export const AuthProvider = ({ children }) => {
   const login = (userData) => {
     setUser(userData);
     localStorage.setItem('token', userData.token);
+    // localStorage.setItem("access_token", response.data.token);
+    // localStorage.setItem("user_id", response.data.user_id);
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem('token');
+    // localStorage.removeItem('user_id');
+    // localStorage.removeItem('access_token');  
   };
 
   return (

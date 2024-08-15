@@ -1,7 +1,12 @@
-import React, { useState } from "react";
-import axios from "axios"; // Import axios for HTTP requests
+import React, { useState, useEffect } from "react";
+import axiosInstance from "../../Config/axiosConfig"; // Adjust the import based on your axios setup
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useParams, useNavigate } from "react-router-dom";
 
 const CourtForm = () => {
+  const { id } = useParams(); // Get court ID from URL
+  const navigate = useNavigate(); // Hook for navigation
   const [courtData, setCourtData] = useState({
     name: "",
     location: "",
@@ -9,7 +14,7 @@ const CourtForm = () => {
     courtType: "",
     pricePerHour: "",
     currency: "NPR",
-    courtImage: "",
+    courtImage: null,
     gallery: [],
     amenities: [],
     contactPerson: "",
@@ -20,6 +25,21 @@ const CourtForm = () => {
     capacity: "",
     lighting: false,
   });
+
+  useEffect(() => {
+    if (id) {
+      const fetchCourt = async () => {
+        try {
+          const response = await axiosInstance.get(`/api/courts/${id}`);
+          setCourtData(response.data);
+        } catch (err) {
+          toast.error("Failed to fetch court details.");
+        }
+      };
+
+      fetchCourt();
+    }
+  }, [id]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -37,6 +57,13 @@ const CourtForm = () => {
     });
   };
 
+  const handleFileChange = (e) => {
+    setCourtData({
+      ...courtData,
+      courtImage: e.target.files[0],
+    });
+  };
+
   const handleAvailabilityChange = (index, e) => {
     const { name, value } = e.target;
     const updatedAvailability = [...courtData.availability];
@@ -51,47 +78,62 @@ const CourtForm = () => {
   };
 
   const addAvailabilityField = () => {
-    setCourtData({
+    setCourtData((courtData) => ({
       ...courtData,
       availability: [
         ...courtData.availability,
         { day: "", startTime: "", endTime: "" },
       ],
-    });
+    }));
   };
-
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/courts",
-        courtData
-      );
-      console.log("Court added successfully:", response.data);
+    const data = new FormData();
+    data.append("name", courtData.name);
+    data.append("location", courtData.location);
+    data.append("description", courtData.description);
+    data.append("courtType", courtData.courtType);
+    data.append("pricePerHour", courtData.pricePerHour);
+    data.append("currency", courtData.currency);
+    data.append("courtImage", courtData.courtImage);
+    data.append("gallery", JSON.stringify(courtData.gallery)); // Convert array to JSON
+    data.append("amenities", JSON.stringify(courtData.amenities));
+    data.append("contactPerson", courtData.contactPerson);
+    data.append("contactNumber", courtData.contactNumber);
+    data.append("email", courtData.email);
+    data.append("availability", JSON.stringify(courtData.availability));
+    data.append("surfaceType", courtData.surfaceType);
+    data.append("capacity", courtData.capacity);
+    data.append("lighting", courtData.lighting);
 
-      // Clear form after successful submission
-      setCourtData({
-        name: "",
-        location: "",
-        description: "",
-        courtType: "",
-        pricePerHour: "",
-        currency: "USD",
-        courtImage: "",
-        gallery: [],
-        amenities: [],
-        contactPerson: "",
-        contactNumber: "",
-        email: "",
-        availability: [],
-        surfaceType: "",
-        capacity: "",
-        lighting: false,
-      });
+    try {
+      let response;
+      if (id) {
+        // Update existing court
+        response = await axiosInstance.put(`/api/courts/${id}`, data, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+      } else {
+        // Add new court
+        response = await axiosInstance.post("/api/courts", data, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+      }
+      console.log("Response:", response);
+      // Add a delay before showing the success toast
+      setTimeout(() => {
+        toast.success(response.data.msg || "Operation successful"); // Fallback message
+      }, 1000); // 1000 milliseconds = 1 second delay
+  
+      navigate("/court/list"); // Redirect after successful submission
     } catch (error) {
-      console.error("Error adding court:", error);
-      // You might want to handle errors more gracefully
+      console.error("Error saving court:", error);
+      toast.error(error.response?.data?.msg || "An error occurred");
     }
   };
 
@@ -100,7 +142,10 @@ const CourtForm = () => {
       onSubmit={handleFormSubmit}
       className="max-w-3xl mx-auto p-8 bg-white shadow-md rounded-lg"
     >
-      <h2 className="text-2xl font-bold mb-6">Add New Court</h2>
+      <ToastContainer />
+      <h2 className="text-2xl font-bold mb-6">
+        {id ? "Edit Court" : "Add New Court"}
+      </h2>
 
       <div className="mb-4">
         <label
@@ -213,14 +258,13 @@ const CourtForm = () => {
           htmlFor="courtImage"
           className="block text-sm font-medium text-gray-700"
         >
-          Court Image URL
+          Court Image
         </label>
         <input
-          type="text"
+          type="file"
           id="courtImage"
           name="courtImage"
-          value={courtData.courtImage}
-          onChange={handleInputChange}
+          onChange={handleFileChange}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
         />
       </div>
@@ -237,7 +281,10 @@ const CourtForm = () => {
           name="gallery"
           value={courtData.gallery.join("\n")}
           onChange={(e) =>
-            setCourtData({ ...courtData, gallery: e.target.value.split("\n") })
+            setCourtData({
+              ...courtData,
+              gallery: e.target.value.split("\n"),
+            })
           }
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
         />
@@ -316,15 +363,18 @@ const CourtForm = () => {
       </div>
 
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="availability"
+          className="block text-sm font-medium text-gray-700"
+        >
           Availability
         </label>
-        {courtData.availability.map((slot, index) => (
-          <div key={index} className="flex space-x-4 mb-2">
+        {courtData.availability.map((availability, index) => (
+          <div key={index} className="mb-2">
             <input
               type="text"
               name="day"
-              value={slot.day}
+              value={availability.day}
               onChange={(e) => handleAvailabilityChange(index, e)}
               placeholder="Day"
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
@@ -332,7 +382,7 @@ const CourtForm = () => {
             <input
               type="time"
               name="startTime"
-              value={slot.startTime}
+              value={availability.startTime}
               onChange={(e) => handleAvailabilityChange(index, e)}
               placeholder="Start Time"
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
@@ -340,7 +390,7 @@ const CourtForm = () => {
             <input
               type="time"
               name="endTime"
-              value={slot.endTime}
+              value={availability.endTime}
               onChange={(e) => handleAvailabilityChange(index, e)}
               placeholder="End Time"
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
@@ -350,9 +400,9 @@ const CourtForm = () => {
         <button
           type="button"
           onClick={addAvailabilityField}
-          className="text-blue-500 mt-2"
+          className="mt-1 block text-blue-500 underline"
         >
-          + Add Availability
+          Add Availability
         </button>
       </div>
 
@@ -391,25 +441,27 @@ const CourtForm = () => {
       </div>
 
       <div className="mb-4">
-        <label className="inline-flex items-center">
-          <input
-            type="checkbox"
-            name="lighting"
-            checked={courtData.lighting}
-            onChange={handleCheckboxChange}
-            className="form-checkbox"
-          />
-          <span className="ml-2 text-sm font-medium text-gray-700">
-            Lighting Available
-          </span>
+        <label
+          htmlFor="lighting"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Lighting
         </label>
+        <input
+          type="checkbox"
+          id="lighting"
+          name="lighting"
+          checked={courtData.lighting}
+          onChange={handleCheckboxChange}
+          className="mt-1"
+        />
       </div>
 
       <button
         type="submit"
-        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        className="w-full px-4 py-2 bg-blue-500 text-white font-bold rounded-md shadow-md hover:bg-blue-600"
       >
-        Submit
+        {id ? "Update Court" : "Add Court"}
       </button>
     </form>
   );

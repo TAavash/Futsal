@@ -1,75 +1,69 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import DefaultCourtImage from "../../assets/futsal-court.webp";
 
 const CourtComponent = () => {
-  const { id } = useParams();
-  const [court, setCourt] = useState(null);
+  const [courts, setCourts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   useEffect(() => {
-    const fetchCourtDetails = async () => {
+    const fetchCourts = async () => {
       try {
-        const response = await axios.get(`/api/courts/${id}`);
-        setCourt(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching court details:', error);
+        const response = await axios.get("http://localhost:5000/api/courts");
+        setCourts(response.data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
         setLoading(false);
       }
     };
 
-    fetchCourtDetails();
-  }, [id]);
+    fetchCourts();
+  }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!court) {
-    return <div>Court not found</div>;
-  }
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
-      <h1 className="text-3xl font-bold mb-4">{court.name}</h1>
-      <p className="text-gray-700 text-lg mb-2">{court.location}</p>
-      <p className="text-gray-500 mb-4">{court.description}</p>
+    <div className="p-10 bg-white text-black">
+      <h2 className="text-2xl font-bold mb-6">Futsal Courts</h2>
+      <div className="grid grid-cols-1 gap-4">
+        {courts.map((court) => (
+          <div key={court._id} className="p-4 bg-gray-100 rounded-lg shadow-lg">
+            <div className="flex justify-between items-center">
+              <img
+                src={court.courtImage || DefaultCourtImage}
+                alt={court.name}
+                className="w-full/2 h-32 rounded-lg mb-4 object-cover"
+              />
+              <div className="flex flex-col ml-10 items-center">
+                <h3 className="text-xl font-semibold">{court.name}</h3>
+                <h3 className="text-xl text-gray-600">
+                  Location: {court.location || "N/A"}
+                </h3>
 
-      <img src={`/uploads/${court.courtImage}`} alt={court.name} className="w-full h-64 object-cover rounded-lg mb-4" />
-
-      <h2 className="text-2xl font-bold mb-2">Details</h2>
-      <p><span className="font-bold">Type:</span> {court.courtType}</p>
-      <p><span className="font-bold">Price per Hour:</span> {court.pricePerHour} {court.currency}</p>
-      <p><span className="font-bold">Contact:</span> {court.contactPerson} ({court.contactNumber}, {court.email})</p>
-      <p><span className="font-bold">Surface Type:</span> {court.surfaceType}</p>
-      <p><span className="font-bold">Capacity:</span> {court.capacity} people</p>
-      <p><span className="font-bold">Lighting Available:</span> {court.lighting ? 'Yes' : 'No'}</p>
-
-      <h2 className="text-2xl font-bold mt-6 mb-2">Amenities</h2>
-      <ul className="list-disc list-inside">
-        {court.amenities.map((amenity, index) => (
-          <li key={index}>{amenity}</li>
-        ))}
-      </ul>
-
-      <h2 className="text-2xl font-bold mt-6 mb-2">Availability</h2>
-      <ul className="list-disc list-inside">
-        {court.availability.map((slot, index) => (
-          <li key={index}>{slot.day}: {slot.startTime} - {slot.endTime}</li>
-        ))}
-      </ul>
-
-      {court.gallery && court.gallery.length > 0 && (
-        <>
-          <h2 className="text-2xl font-bold mt-6 mb-2">Gallery</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {/* {court.gallery.map((image, index) => (
-              <img key={index} src={`/uploads/${image}`} alt={`Gallery image ${index + 1}`} className="w-full h-40 object-cover rounded-lg" />
-            ))} */}
+                <p className="text-sm text-gray-600">
+                  Location: {court.location || "N/A"}
+                </p>
+                <p className="text-sm text-gray-600">
+                  Price Per Hour: {court.currency} {court.pricePerHour}
+                </p>
+              </div>
+              <div>
+                <button
+                  onClick={() => navigate(`/court/${court._id}`)} // Navigate to the court detail page
+                  className="mt-4 bg-green-600 text-white py-2 px-4 rounded-full"
+                >
+                  Book Now
+                </button>
+              </div>
+            </div>
           </div>
-        </>
-      )}
+        ))}
+      </div>
     </div>
   );
 };

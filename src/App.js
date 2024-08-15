@@ -10,11 +10,15 @@ import ContactComponent from "./components/Contact/ContactComponent";
 import RegistrationForm from "./components/Register/RegisterComponent";
 import CategoryComponent from "./components/Category/CategoryComponent";
 import CourtComponent from "./components/Court/CourtComponent";
-import AddCourtComponent from "./components/AddCourt/CourtForm";
+import CourtForm from "./components/AddCourt/CourtForm";
 import AddProductComponent from "./components/AddProduct/AddProductComponent";
 import ProtectedRoute from "./ProtectedRoutes/protectedRoute";
 import LoginComponent from "./components/Login/Login";
 import BookingComponent from "./components/Booking/BookingList";
+import BookingFormComponent from "./components/AddBooking/BookingForm";
+import CourtDetailComponents from "./components/Court/CourtDetailPage";
+import UserProfile from "./components/UserProfile/UserProfile";
+import CourtList from "./components/Court/CourtsListPage";
 
 class App extends Component {
   render() {
@@ -28,8 +32,14 @@ class App extends Component {
             <Route path="/contact" element={<ContactComponent />} />
             <Route path="/signup" element={<RegistrationForm />} />
             <Route path="/login" element={<LoginComponent />} />
-            <Route path="/booking" element={<BookingComponent />} />
+            <Route path="/profile" element={<UserProfile />} />
+            <Route path="/myBooking" element={<BookingComponent />} />
+            <Route path="/bookings" element={<BookingFormComponent />} />
+            <Route path="/bookings:id" element={<BookingFormComponent />} />
             <Route path="/court" element={<CourtComponent />} />
+            <Route path="/court/:id" element={<CourtDetailComponents />} />
+            <Route path="/court/list" element={<CourtList />} />
+            <Route path="/court/edit/:id" element={<CourtForm />} />
 
             <Route
               path="/shop"
@@ -66,10 +76,10 @@ class App extends Component {
               }
             />
             <Route
-              path="/addcourt"
+              path="/court/add"
               element={
                 // <ProtectedRoute role="admin">
-                <AddCourtComponent />
+                <CourtForm />
                 // </ProtectedRoute>
               }
             />

@@ -46,15 +46,15 @@
 
 // export default HomeComponent;
 
-import React from 'react';
-import HeroSection from './HeroSection';
-import NearbyFields from './NearbyFields';
+import React from "react";
+import HeroSection from "./HeroSection";
+import CourtCard from "../Court/CourtCard";
 
 function HomeComponent() {
   return (
     <div className="bg-green-500 min-h-screen">
       <HeroSection />
-      <NearbyFields />
+      <CourtCard />
     </div>
   );
 }
