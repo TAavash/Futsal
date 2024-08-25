@@ -7,17 +7,19 @@ const {
   updateBooking,
   deleteBooking,
   getUserBookings,
-  getBookingById
+  getBookingById,
+  getAllBookings,
 } = require("../controllers/bookingController");
 
-// Middleware to ensure authentication and authorization
-router.use(authorizeRole('user')); // Assuming you want to restrict these routes to 'user' role
+// router.use(authorizeRole('user')); // Assuming you want to restrict these routes to 'user' role
+// router.use(authMiddleware);
 
 // Booking Routes
-router.get("/user", getUserBookings); // Get all bookings for a user
-router.get("/:id", getBookingById); // Get a specific booking by ID
-router.post("/", authMiddleware, createBooking); // Create a new booking
-router.put("/:id", updateBooking); // Update a booking
-router.delete("/:id", deleteBooking); // Delete a booking
+router.get("/user", authMiddleware, getUserBookings); // Get all bookings for a user
+router.get("/:id", authMiddleware, getBookingById); // Get a specific booking by ID
+router.get("/", authMiddleware,authorizeRole('admin'), getAllBookings);  // Get all bookings
+router.put("/:id", authMiddleware, updateBooking); // Update a booking
+router.delete("/:id", authMiddleware, deleteBooking); // Delete a booking
+router.post("/create", authMiddleware, createBooking);// Create a new booking
 
 module.exports = router;

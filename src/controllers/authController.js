@@ -94,7 +94,12 @@ const loginUser = async (req, res) => {
         res.json({
           msg: "User logged in successfully",
           token: `Bearer ${token}`,
-          user,
+          user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role
+          },
         });
       }
     );
@@ -103,6 +108,7 @@ const loginUser = async (req, res) => {
     res.status(500).send({ msg: "Server error" });
   }
 };
+
 
 module.exports = {
   registerUser,
