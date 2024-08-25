@@ -2,10 +2,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  isAuthenticated: false,
-  userRole: null,
-  token: null,
-  userId: null, // Add userId to the initial state
+  isAuthenticated: !!localStorage.getItem('token'), // Check if there's a token in localStorage
+  userRole: localStorage.getItem('userRole'), // Retrieve user role from localStorage
+  token: localStorage.getItem('token'), // Retrieve token from localStorage
+  userId: localStorage.getItem('user_id'), // Retrieve token from localStorage
 };
 
 const authSlice = createSlice({

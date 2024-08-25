@@ -43,7 +43,7 @@ export const createCourts = async (courtData) => {
 
 export const fetchCourts = () => API.get('/courts');
 export const fetchCourtById = (id) => API.get(`/courts/${id}`);
-// export const createBooking = (data) => API.post('/bookings', data);
+// export const createBooking = (data) => API.post('/bookings/create', data);
 // export const fetchBookingsByUser = (userId) => API.get(`/bookings/user/${userId}`);
 // export const createReview = (data) => API.post('/reviews', data);
 // export const fetchReviewsByCourt = (courtId) => API.get(`/reviews/${courtId}`);

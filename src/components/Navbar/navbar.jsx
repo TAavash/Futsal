@@ -29,18 +29,15 @@ function Navbar() {
               <Link to="/" className={getLinkClass("/")}>Home</Link>
               {authState.isAuthenticated && (
                 <>
-                  <Link to="/shop" className={getLinkClass("/shop")}>Shop</Link>
-                  <Link to="/product" className={getLinkClass("/product")}>Product</Link>
-                  <Link to="/myBooking" className={getLinkClass("/myBooking")}>Booking</Link>
                   <Link to="/court" className={getLinkClass("/court")}>Court</Link>
+                  <Link to="/booking/my" className={getLinkClass("/booking/my")}>Booking</Link>
                 </>
               )}
               {authState.userRole === 'admin' && (
                 <>
-                  <Link to="/category" className={getLinkClass("/category")}>category</Link>
-                  <Link to="/addproduct" className={getLinkClass("/addproduct")}>Add Product</Link>
                   <Link to="/court/add" className={getLinkClass("/court/add")}>Add Court</Link>
                   <Link to="/court/list" className={getLinkClass("/court/list")}>Court List</Link>
+                  <Link to="/booking/admin" className={getLinkClass("/booking/admin")}>Booking List</Link>
                 </>
               )}
             </div>
@@ -70,18 +67,15 @@ function Navbar() {
             <li><Link to="/" className={location.pathname === "/" ? "block text-sm px-2 py-4 text-white bg-green-500 font-semibold" : "block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"}>Home</Link></li>
             {authState.isAuthenticated && (
               <>
-                <li><Link to="/shop" className={location.pathname === "/shop" ? "block text-sm px-2 py-4 text-white bg-green-500 font-semibold" : "block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"}>Shop</Link></li>
-                <li><Link to="/product" className={location.pathname === "/product" ? "block text-sm px-2 py-4 text-white bg-green-500 font-semibold" : "block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"}>Product</Link></li>
                 <li><Link to="/court" className={location.pathname === "/court" ? "block text-sm px-2 py-4 text-white bg-green-500 font-semibold" : "block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"}>Court</Link></li>
-                <li><Link to="/myBooking" className={location.pathname === "/myBooking" ? "block text-sm px-2 py-4 text-white bg-green-500 font-semibold" : "block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"}>Booking</Link></li>
+                <li><Link to="/booking/my" className={location.pathname === "/booking/my" ? "block text-sm px-2 py-4 text-white bg-green-500 font-semibold" : "block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"}>Booking</Link></li>
               </>
             )}
             {authState.userRole === 'admin' && (
               <>
-                <li><Link to="/category" className={location.pathname === "/category" ? "block text-sm px-2 py-4 text-white bg-green-500 font-semibold" : "block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"}>category</Link></li>
-                <li><Link to="/addproduct" className={location.pathname === "/addproduct" ? "block text-sm px-2 py-4 text-white bg-green-500 font-semibold" : "block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"}>Add Product</Link></li>
                 <li><Link to="/court/add" className={location.pathname === "/court/add" ? "block text-sm px-2 py-4 text-white bg-green-500 font-semibold" : "block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"}>Add Court</Link></li>
                 <li><Link to="/court/list" className={location.pathname === "/court/list" ? "block text-sm px-2 py-4 text-white bg-green-500 font-semibold" : "block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"}>Court List</Link></li>
+                <li><Link to="/booking/admin" className={location.pathname === "/booking/admin" ? "block text-sm px-2 py-4 text-white bg-green-500 font-semibold" : "block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"}>Booking List</Link></li>
               </>
             )}
             {authState.isAuthenticated ? (

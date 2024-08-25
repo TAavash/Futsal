@@ -5,7 +5,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch } from "react-redux";
 import { login } from "../../features/auth/authSlice";
-import Footsal from "../../assets/footsal.jpg";
+import Footsal from "../../assets/foootsal.jpg";
 
 function LoginComponent() {
   const [loginData, setLoginData] = useState({
@@ -123,7 +123,7 @@ function LoginComponent() {
               <div className="text-red-500 text-sm">{errors.password}</div>
             )}
           </div>
-          <div className="mb-4 flex items-center">
+          {/* <div className="mb-4 flex items-center">
             <input
               type="checkbox"
               id="rememberMe"
@@ -138,7 +138,7 @@ function LoginComponent() {
             >
               Remember Me
             </label>
-          </div>
+          </div> */}
           <div className="flex items-center justify-between">
             <button
               type="submit"

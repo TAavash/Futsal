@@ -36,41 +36,26 @@ const BookingForm = ({ courtId, courtName, pricePerHour, currency }) => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token"); // Ensure this token has the "Bearer " prefix if required
   
     if (!token) {
       toast.error("User not logged in. Please log in to book a court.");
       return;
     }
-
-    // Check court availability
+  
+    const bookingData = {
+      courtId,
+      date,
+      startTime,
+      endTime,
+      totalPrice,
+      paymentStatus: "pending",
+    };
+  
     try {
-      const availabilityResponse = await axiosInstance.get("/api/check-availability", {
-        params: {
-          courtId,
-          date,
-          startTime,
-          endTime,
-        },
-      });
-
-      if (!availabilityResponse.data.isAvailable) {
-        toast.error("Court is already booked for the selected date and time.");
-        return;
-      }
-  
-      const bookingData = {
-        courtId,
-        date,
-        startTime,
-        endTime,
-        totalPrice,
-        paymentStatus: "pending",
-      };
-  
-      await axiosInstance.post("/api/bookings", bookingData, {
+      await axiosInstance.post("/api/bookings/create", bookingData, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // Ensure this matches how your backend expects the token
         },
       });
       toast.success("Booking successful!");
@@ -79,6 +64,8 @@ const BookingForm = ({ courtId, courtName, pricePerHour, currency }) => {
       toast.error(error.response?.data?.msg || "Failed to book court.");
     }
   };
+  
+  
 
   return (
     <div className="max-w-lg mx-auto p-8 bg-white shadow-md rounded-lg">

@@ -7,12 +7,32 @@ const CourtComponent = () => {
   const [courts, setCourts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const [searchQuery, setSearchQuery] = useState(""); // State for search query
+  const [sortOrder, setSortOrder] = useState(""); // State for sort order
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(""); // Debounced search query
+  const navigate = useNavigate();
+
+  // Debounce the search input
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 500); // Wait 500ms after the last keystroke
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchQuery]);
 
   useEffect(() => {
     const fetchCourts = async () => {
+      setLoading(true);
       try {
-        const response = await axios.get("http://localhost:5000/api/courts");
+        const response = await axios.get("http://localhost:5000/api/courts", {
+          params: {
+            search: debouncedSearchQuery,
+            sort: sortOrder,
+          },
+        });
         setCourts(response.data);
       } catch (err) {
         setError(err.message);
@@ -22,14 +42,35 @@ const CourtComponent = () => {
     };
 
     fetchCourts();
-  }, []);
+  }, [debouncedSearchQuery, sortOrder]); // Re-fetch courts when debouncedSearchQuery or sortOrder changes
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="p-10 bg-white text-black">
-      <h2 className="text-2xl font-bold mb-6">Futsal Courts</h2>
+      <h2 className="text-2xl font-bold mb-6">Our Futsal Courts</h2>
+
+      {/* Search Input */}
+      <input
+        type="text"
+        placeholder="Search by name or location"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="mb-4 p-2 border border-gray-300 rounded"
+      />
+
+      {/* Sort Options */}
+      <select
+        value={sortOrder}
+        onChange={(e) => setSortOrder(e.target.value)}
+        className="mb-4 p-2 border border-gray-300 rounded"
+      >
+        <option value="">Sort by Price</option>
+        <option value="asc">Price: Low to High</option>
+        <option value="desc">Price: High to Low</option>
+      </select>
+
       <div className="grid grid-cols-1 gap-4">
         {courts.map((court) => (
           <div key={court._id} className="p-4 bg-gray-100 rounded-lg shadow-lg">
@@ -44,17 +85,13 @@ const CourtComponent = () => {
                 <h3 className="text-xl text-gray-600">
                   Location: {court.location || "N/A"}
                 </h3>
-
-                <p className="text-sm text-gray-600">
-                  Location: {court.location || "N/A"}
-                </p>
                 <p className="text-sm text-gray-600">
                   Price Per Hour: {court.currency} {court.pricePerHour}
                 </p>
               </div>
               <div>
                 <button
-                  onClick={() => navigate(`/court/${court._id}`)} // Navigate to the court detail page
+                  onClick={() => navigate(`/court/${court._id}`)}
                   className="mt-4 bg-green-600 text-white py-2 px-4 rounded-full"
                 >
                   Book Now
