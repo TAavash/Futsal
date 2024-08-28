@@ -17,6 +17,7 @@ import AdminBookingUpdateComponent from "./components/BookingAdmin/BookingUpdate
 import BookingFormComponent from "./components/AddBooking/BookingForm";
 import CourtDetailComponents from "./components/Court/CourtDetailPage";
 import UserProfile from "./components/UserProfile/UserProfile";
+import UserProfilesList from "./components/UserProfilesList/UserProfilesList";
 import CourtList from "./components/Court/CourtsListPage";
 
 class App extends Component {
@@ -32,6 +33,7 @@ class App extends Component {
             <Route path="/signup" element={<RegistrationForm />} />
             <Route path="/login" element={<LoginComponent />} />
             <Route path="/profile" element={<UserProfile />} />
+            <Route path="/profiles" element={<UserProfilesList />} />
             <Route path="/booking/my" element={<MyBookingComponent />} />
             <Route path="/booking/admin" element={<AdminBookingComponent />} />
             <Route path="/calendar" element={<CalendarComponent />} />

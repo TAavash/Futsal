@@ -31,6 +31,7 @@ function Navbar() {
                 <>
                   <Link to="/court" className={getLinkClass("/court")}>Court</Link>
                   <Link to="/booking/my" className={getLinkClass("/booking/my")}>Booking</Link>
+                  <Link to="/profile" className={getLinkClass("/profile")}>Profile</Link>
                 </>
               )}
               {authState.userRole === 'admin' && (
@@ -38,6 +39,7 @@ function Navbar() {
                   <Link to="/court/add" className={getLinkClass("/court/add")}>Add Court</Link>
                   <Link to="/court/list" className={getLinkClass("/court/list")}>Court List</Link>
                   <Link to="/booking/admin" className={getLinkClass("/booking/admin")}>Booking List</Link>
+                  <Link to="/profiles" className={getLinkClass("/profiles")}>User List</Link>
                 </>
               )}
             </div>
@@ -69,6 +71,7 @@ function Navbar() {
               <>
                 <li><Link to="/court" className={location.pathname === "/court" ? "block text-sm px-2 py-4 text-white bg-green-500 font-semibold" : "block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"}>Court</Link></li>
                 <li><Link to="/booking/my" className={location.pathname === "/booking/my" ? "block text-sm px-2 py-4 text-white bg-green-500 font-semibold" : "block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"}>Booking</Link></li>
+                <li><Link to="/profile" className={location.pathname === "/profile" ? "block text-sm px-2 py-4 text-white bg-green-500 font-semibold" : "block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"}>Profile</Link></li>
               </>
             )}
             {authState.userRole === 'admin' && (
@@ -76,6 +79,7 @@ function Navbar() {
                 <li><Link to="/court/add" className={location.pathname === "/court/add" ? "block text-sm px-2 py-4 text-white bg-green-500 font-semibold" : "block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"}>Add Court</Link></li>
                 <li><Link to="/court/list" className={location.pathname === "/court/list" ? "block text-sm px-2 py-4 text-white bg-green-500 font-semibold" : "block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"}>Court List</Link></li>
                 <li><Link to="/booking/admin" className={location.pathname === "/booking/admin" ? "block text-sm px-2 py-4 text-white bg-green-500 font-semibold" : "block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"}>Booking List</Link></li>
+                <li><Link to="/profiles" className={location.pathname === "/profiles" ? "block text-sm px-2 py-4 text-white bg-green-500 font-semibold" : "block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"}>User List</Link></li>
               </>
             )}
             {authState.isAuthenticated ? (

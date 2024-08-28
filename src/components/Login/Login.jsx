@@ -40,9 +40,10 @@ function LoginComponent() {
   
     if (Object.keys(validationErrors).length === 0) {
       try {
+        console.log(loginData)
         const response = await axios.post(
           "http://localhost:5000/api/auth/login",
-          loginData
+          {email:loginData.email, password:loginData.password}
         );
         const { token, user } = response.data;
         localStorage.setItem("token", token);
