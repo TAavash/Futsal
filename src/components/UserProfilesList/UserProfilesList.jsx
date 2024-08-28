@@ -1,7 +1,6 @@
-// src/pages/UserProfilesList.jsx
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const UserProfilesList = () => {
   const [profiles, setProfiles] = useState([]);
@@ -9,20 +8,32 @@ const UserProfilesList = () => {
 
   useEffect(() => {
     const fetchProfiles = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          throw new Error('No token found');
-        }
+      const token = localStorage.getItem("token");
+      console.log("Token used in request:", token); // Log the token to ensure it is correct
 
-        const response = await axios.get('http://localhost:5000/api/profile/all', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setProfiles(response.data.profiles);
+      if (!token) {
+        toast.error("No token found. Please log in.");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/api/profile/all`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        // Ensure the data structure is handled correctly
+        setProfiles(response.data.profiles || []);
+        setLoading(false);
       } catch (error) {
-        console.error('Error fetching profiles:', error);
-        toast.error(`Error fetching profiles: ${error.response?.data?.message || error.message}`);
-      } finally {
+        console.error("Error fetching profiles:", error);
+        toast.error(
+          `Failed to fetch profiles: ${
+            error.response?.data?.message || error.message
+          }`
+        );
         setLoading(false);
       }
     };
@@ -40,15 +51,10 @@ const UserProfilesList = () => {
           {profiles.map((profile) => (
             <li key={profile._id} className="border p-4 rounded-lg shadow-md">
               <div className="flex items-center">
-                <img
-                  src={profile.profileImage || 'path/to/default/image.png'}
-                  alt={`${profile.name}'s profile`}
-                  className="w-16 h-16 object-cover rounded-full border-2 border-gray-300 mr-4"
-                />
                 <div>
                   <h2 className="text-xl font-semibold">{profile.name}</h2>
                   <p className="text-sm text-gray-600">{profile.email}</p>
-                  <p className="mt-2">{profile.bio || 'No bio available.'}</p>
+                  <p className="mt-2">{profile.role}</p>
                 </div>
               </div>
             </li>

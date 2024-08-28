@@ -6,11 +6,9 @@ import Ffotsal from "../../assets/ffotsal.png";
 
 const UserProfile = () => {
   const [profile, setProfile] = useState(null);
-  const [editMode, setEditMode] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("");
-  const [password, setPassword] = useState(null);
 
   const userId = localStorage.getItem("user_id");
 
@@ -34,7 +32,6 @@ const UserProfile = () => {
         setName(profileData.name || "");
         setEmail(profileData.email || "");
         setRole(profileData.role || "");
-        setPassword(profileData.password || Ffotsal);
       } catch (error) {
         console.error("Error fetching profile:", error);
         toast.error("Failed to fetch profile data.");
@@ -44,37 +41,6 @@ const UserProfile = () => {
     fetchProfile();
   }, [userId]);
 
-  const handleUpdateProfile = async (e) => {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("email", email);
-    formData.append("role", role);
-    if (password) formData.append("password", password);
-
-    try {
-      const response = await axios.put(
-        "http://localhost:5000/api/profile/update", // Full URL to ensure no issues with base URL
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // Ensure the token is correctly fetched
-          },
-        }
-      );
-      toast.success("Profile updated successfully!");
-      setProfile(response.data.profile);
-      setEditMode(false);
-    } catch (error) {
-      if (error.response && error.response.status === 401) {
-        toast.error("Unauthorized. Please log in again.");
-      } else {
-        toast.error("Error updating profile.");
-      }
-      console.error("Error updating profile:", error);
-    }
-  };
 
   if (!profile) return <div>Loading...</div>;
 
