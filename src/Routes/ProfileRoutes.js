@@ -38,7 +38,7 @@ router.get('/all', auth, profileController.getAllUserProfiles);
  * @type GET
  * @return response
  */
-router.get('/:id', auth, profileController.getUserProfileById);
+router.get('/:id', profileController.getUserProfileById);
 
 /**
  * @description To delete the authenticated user's profile

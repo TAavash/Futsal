@@ -1,4 +1,5 @@
 const domain = "http://localhost:5000";
+const User = require("../models/authUserModel");
 const UserProfiles = require("../models/userProfile");
 // Helper function to send error responses
 const sendErrorResponse = (res, error) => {
@@ -40,6 +41,7 @@ const updateUserProfile = async (req, res) => {
 // Get user profile
 const getUserProfile = async (req, res) => {
   try {
+    console.log("getuserprofile");
     const profile = await UserProfiles.findOne({ user: req.user.id });
     if (!profile) {
       return res.status(404).json({ msg: "Profile not found" });
@@ -53,6 +55,7 @@ const getUserProfile = async (req, res) => {
 // Get all user profiles
 const getAllUserProfiles = async (req, res) => {
   try {
+    console.log("getAllUserProfiles");
     const profiles = await UserProfiles.find().populate("user", [
       "name",
       "email",
@@ -66,9 +69,10 @@ const getAllUserProfiles = async (req, res) => {
 // Get user profile by ID
 const getUserProfileById = async (req, res) => {
   try {
-    const profile = await UserProfiles.findOne({
-      user: req.params.id,
-    }).populate("user", ["name", "email"]);
+    const { id } = req.params;
+    const profile = await User.findOne({
+      _id: id,
+    });
     if (!profile) {
       return res.status(404).json({ msg: "Profile not found" });
     }
